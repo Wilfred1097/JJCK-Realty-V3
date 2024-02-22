@@ -79,9 +79,6 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
           <a class="nav-link" href="property-grid.php">Property</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="blog-grid.php">Login</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" href="index.php#contact">Contact</a>
         </li>
       </ul>
@@ -133,10 +130,6 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
               <div class="summary-list">
                   <ul class="list">
                     <li class="d-flex justify-content-between">
-                      <strong>Lot ID:</strong>
-                      <span><?php echo $row['lot_Id']; ?></span>
-                    </li>
-                    <li class="d-flex justify-content-between">
                       <strong>Block:</strong>
                       <span><?php echo $row['block_number']; ?></span>
                     </li>
@@ -145,12 +138,12 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
                       <span><?php echo $row['lot_number']; ?></span>
                     </li>
                     <li class="d-flex justify-content-between">
-                      <strong>Dimension:</strong>
-                      <span><?php echo $row['dimension']; ?> m<sup>2</sup></span>
+                      <strong>Term:</strong>
+                      <span><?php echo $row['term']; ?> years</span>
                     </li>
                     <li class="d-flex justify-content-between">
-                      <strong>Term:</strong>
-                      <span><?php echo $row['term']; ?></span>
+                      <strong>Dimension:</strong>
+                      <span><?php echo $row['dimension']; ?> m<sup>2</sup></span>
                     </li>
                     <li class="d-flex justify-content-between">
                       <strong>Price:</strong>

@@ -37,19 +37,14 @@
 <body>
     <nav class="navbar navbar-default navbar-trans navbar-expand-lg fixed-top">
         <div class="container">
-            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarDefault"
-                aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <a class="navbar-brand text-brand" href="index.php" style="font-size: 28px;">JJCK<span class="color-b">
-                    Realty</span></a>
+            <div class="text-center w-100"> <!-- Center align the content -->
+                <a class="navbar-brand text-brand" href="index.php" style="font-size: 28px;">JJCK<span class="color-b">Realty</span></a>
+            </div>
         </div>
     </nav>
 
     <div class="container justify-content-center">
-        <div class="login-container"  style="margin-top: 170px;">
+        <div class="login-container" style="margin-top: 170px;">
             <h2 class="text-center">Login</h2>
             <form>
                 <div class="form-group">
@@ -60,9 +55,12 @@
                     <label for="password">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="Enter password" required>
                 </div>
-                <button type="submit" class="btn btn-success btn-block">Login</button><hr>
-                <span style="margin-left: 60px;">Not account yet? <a href="signup.php">Sign up here</a></span><hr>
-                <span style="margin-left: 60px;">Forgot Password? <a href="resetpassword.php">Reset here</a></span>
+                <button type="submit" class="btn btn-success btn-block">Login</button>
+                <hr>
+                <div class="text-center"> <!-- Center align span elements -->
+                    <span style="font-size: 15px;">No account yet? <a href="signup.php">Sign up here</a></span><br><hr/>
+                    <span style="font-size: 14px;">Forgot Password? <a href="resetpassword.php">Reset here</a></span>
+                </div>
             </form>
         </div>
     </div>
