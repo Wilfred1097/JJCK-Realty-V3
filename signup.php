@@ -17,6 +17,8 @@ if(isset($_POST['submit'])) {
     $stmt_check_email->execute();
     $result_check_email = $stmt_check_email->get_result();
 
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
     // If email already exists, return an error
     if ($result_check_email->num_rows > 0) {
         // Email already registered, display alert
@@ -28,7 +30,7 @@ if(isset($_POST['submit'])) {
         // Inserting data into the database
         $query = "INSERT INTO users_tb (complete_name, address, birthdate, email, OTP, password, otp_status) VALUES (?, ?, ?, ?, ?, ?, 'not verified')";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssssss", $name, $address, $birthdate, $email, $random_otp, $password);
+        $stmt->bind_param("ssssss", $name, $address, $birthdate, $email, $random_otp, $hashed_password);
 
         // Executing the query
         if ($stmt->execute()) {
@@ -100,7 +102,7 @@ if(isset($_POST['submit'])) {
     <div class="container justify-content-center">
         <div class="login-container">
             <h2 class="text-center" style="margin-bottom: 30px;">Customer Signup</h2>
-            <form action="" method="post">
+            <form action="" method="post"  onsubmit="return validatePassword();">
                 <div class="form-group">
                     <label for="name">Complete Name</label>
                     <input type="text" class="form-control" id="name" name="name" placeholder="Enter complete name" required>
@@ -140,6 +142,20 @@ if(isset($_POST['submit'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function validatePassword() {
+            var newPassword = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmpassword").value;
+
+            if (newPassword != confirmPassword) {
+                alert("Passwords do not match");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
 </body>
 
 </html>

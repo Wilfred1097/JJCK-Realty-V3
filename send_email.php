@@ -11,7 +11,7 @@ session_start();
 $gmail = "catalanwilfredo97@gmail.com";
 $app_password = "sykmmtpojmudqbik";
 
-$sender_name = "jjckrealtyservices";
+$sender_name = "JJCK Realty Services";
 
 try {
     //Create an instance; passing `true` enables exceptions

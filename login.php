@@ -48,18 +48,18 @@
             <h2 class="text-center">Login</h2>
             <form>
                 <div class="form-group">
-                    <label for="email">Email</label>
+                    <label for="email" style="font-size: 14px;">Email</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password" style="font-size: 14px;">Password</label>
                     <input type="password" class="form-control" id="password" placeholder="Enter password" required>
                 </div>
                 <button type="submit" class="btn btn-success btn-block">Login</button>
                 <hr>
                 <div class="text-center"> <!-- Center align span elements -->
                     <span style="font-size: 15px;">No account yet? <a href="signup.php">Sign up here</a></span><br><hr/>
-                    <span style="font-size: 14px;">Forgot Password? <a href="resetpassword.php">Reset here</a></span>
+                    <span style="font-size: 14px;">Forgot Password? <a href="reset_password.php">Reset here</a></span>
                 </div>
             </form>
         </div>
