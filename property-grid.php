@@ -63,9 +63,22 @@ require './conn/db.php';
           <li class="nav-item">
             <a class="nav-link" href="index.php#contact">Contact</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="login.php">Login</a>
-          </li>
+            <?php
+            if (isset($_COOKIE['user_token'])) {
+                // If user_token cookie exists, show Logout link and Account link
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="account.php">Account</a>
+                    </li>';
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="logout.php">Logout</a>
+                    </li>';
+            } else {
+                // If user_token cookie does not exist, show Login link
+                echo '<li class="nav-item">
+                        <a class="nav-link" href="login.php">Login</a>
+                    </li>';
+            }
+            ?>
         </ul>
       </div>
       <!-- <a href="login.php"><button class="btn btn-b">Login</button></a> -->

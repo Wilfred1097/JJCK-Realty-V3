@@ -31,31 +31,46 @@ if(isset($_POST['submit'])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $user_id;
 
-                // Create payload for the token
-                $payload = array(
-                    'user_id' => $user_id,
-                    'email' => $email
-                );
+                // Check if the token cookie already exists
+                if (!isset($_COOKIE['user_token'])) {
+                    // Create payload for the token
+                    $payload = array(
+                        'user_id' => $user_id,
+                        'email' => $email
+                    );
 
-                // Encode the payload as JSON
-                $payload_json = json_encode($payload);
+                    // Encode the payload as JSON
+                    $payload_json = json_encode($payload);
 
-                // Encode the payload using base64
-                $payload_base64 = base64_encode($payload_json);
+                    // Encode the payload using base64
+                    $payload_base64 = base64_encode($payload_json);
 
-                // Generate a token (you can also add other fields such as expiration time)
-                $token = $payload_base64;
+                    // Generate a token (you can also add other fields such as expiration time)
+                    $token = $payload_base64;
 
-                // Pass token to client-side along with other necessary data
-                $response = array(
-                    'success' => true,
-                    'token' => $token,
-                    'message' => 'Login successful'
-                );
+                    // Pass token to client-side along with other necessary data
+                    $response = array(
+                        'success' => true,
+                        'token' => $token,
+                        'message' => 'Login successful'
+                    );
+
+                    // Store the token in a cookie named "user_token"
+                    setcookie('user_token', $token, time() + (86400 * 30), "/"); // Cookie expires in 30 days
+                } else {
+                    // Token already exists
+                    $token = $_COOKIE['user_token'];
+
+                    // Pass token to client-side along with other necessary data
+                    $response = array(
+                        'success' => true,
+                        'token' => $token,
+                        'message' => 'Login successful'
+                    );
+                }
 
                 // Output JSON response
                 header("Location: index.php");
-                // echo json_encode($response);
                 exit();
             } else {
                 // Invalid username or password
@@ -175,8 +190,8 @@ if(isset($_POST['submit'])) {
                     data: formData,
                     success: function(response) {
                         if (response.success) {
-                            // Store the token in a cookie
-                            document.cookie = "token=" + response.token + "; path=/"; // Set the cookie with the token
+                            // Store the token in a cookie named "user_token"
+                            document.cookie = "user_token=" + response.token + "; path=/"; // Set the cookie with the token
                             // Redirect to another page or perform other actions
                             window.location.href = 'index.php'; // Replace 'index.php' with the desired page
                         } else {
