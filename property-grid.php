@@ -119,21 +119,66 @@ require './conn/db.php';
       <div class="row">
         <div class="col-sm-12">
           <div class="grid-option">
-            <form>
-              <select class="custom-select">
-                <option selected style="font-size: 13px;">Order By</option>
-                <option value="2" style="font-size: 12px;">by Price</option>
-                <option value="1" style="font-size: 12px;">by block</option>
-                <option value="3" style="font-size: 12px;">by Dimension</option>
-              </select>
-            </form>
+              <form method="GET">
+                  <select class="custom-select" name="sort_by">
+                      <option value="0" style="font-size: 13px;">Order By</option>
+                      <option value="1" style="font-size: 12px;" <?php echo isset($_GET['sort_by']) && $_GET['sort_by'] == 1 ? 'selected' : ''; ?>>by Price</option>
+                      <option value="2" style="font-size: 12px;" <?php echo isset($_GET['sort_by']) && $_GET['sort_by'] == 2 ? 'selected' : ''; ?>>by block</option>
+                      <option value="3" style="font-size: 12px;" <?php echo isset($_GET['sort_by']) && $_GET['sort_by'] == 3 ? 'selected' : ''; ?>>by Dimension</option>
+                  </select>
+                  <button type="submit" class="btn btn-success btn-md" style="font-size: 16px">Apply</button>
+              </form>
           </div>
         </div>
         <?php
         require './conn/db.php';
 
-        // SQL query to select all data from users table
-        $sql = "SELECT * FROM lot_table";
+        // Number of listings per page
+        $limit = 15;
+
+        // Get the current page number
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+        // Calculate the offset for pagination
+        $offset = ($page - 1) * $limit;
+
+        // SQL query to count total number of rows
+        $countQuery = "SELECT COUNT(*) as total FROM lot_table";
+        $countResult = $conn->query($countQuery);
+        $countRow = $countResult->fetch_assoc();
+        $totalRows = $countRow['total'];
+
+        // Calculate total number of pages
+        $totalPages = ceil($totalRows / $limit);
+
+        // Initialize sorting column and default sort order
+        $sort_column = 'lot_Id';
+        $sort_order = 'ASC';
+
+        // Check if sort_by parameter is set
+        if (isset($_GET['sort_by'])) {
+            switch ($_GET['sort_by']) {
+                case 1:
+                    $sort_column = 'price';
+                    break;
+                case 2:
+                    $sort_column = 'block_number';
+                    break;
+                case 3:
+                    $sort_column = 'dimension';
+                    break;
+                default:
+                    // Default sorting column (if sort_by value is invalid)
+                    $sort_column = 'lot_Id';
+            }
+        }
+
+        // SQL query to select limited data from users table based on pagination and sorting
+        $sql = "SELECT * FROM lot_table ORDER BY $sort_column $sort_order LIMIT $limit OFFSET $offset";
+
+
+        // // SQL query to select limited data from users table based on pagination
+        // $sql = "SELECT * FROM lot_table LIMIT $limit OFFSET $offset";
 
         // Execute query
         $result = $conn->query($sql);
@@ -143,87 +188,87 @@ require './conn/db.php';
             // Output data of each row
             while($row = $result->fetch_assoc()) {
                 // Access the data using $row['column_name']
-        ?>
-        <div class="col-md-4">
-            <div class="carousel-item-b">
-                <div class="card-box-a card-shadow">
-                    <div class="img-box-a">
-                        <?php
-                        // Directly use the data URI stored in the database
-                        ?>
-                        <img src="<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
-                    </div>
-                    <div class="card-overlay">
-                        <div class="card-overlay-a-content">
-                            <div class="card-header-a">
+                ?>
+                <div class="col-md-4">
+                    <div class="carousel-item-b">
+                        <div class="card-box-a card-shadow">
+                            <div class="img-box-a">
+                                <?php
+                                // Directly use the data URI stored in the database
+                                ?>
+                                <img src="<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
                             </div>
-                            <div class="card-body-a">
-                                <div class="price-box d-flex">
-                                    <span class="price-a">BUY | &#8369; <?php echo $row['price']; ?></span>
+                            <div class="card-overlay">
+                                <div class="card-overlay-a-content">
+                                    <div class="card-header-a">
+                                    </div>
+                                    <div class="card-body-a">
+                                        <div class="price-box d-flex">
+                                            <span class="price-a">BUY | &#8369; <?php echo $row['price']; ?></span>
+                                        </div>
+                                        <a href="property-single.php?lot_Id=<?php echo $row['lot_Id']; ?>" class="link-a">Click here to view
+                                            <span class="ion-ios-arrow-forward"></span>
+                                        </a>
+                                    </div>
+                                    <div class="card-footer-a">
+                                        <ul class="card-info d-flex justify-content-around">
+                                            <li>
+                                                <h4 class="card-info-title">Dimension</h4>
+                                                <span><?php echo $row['dimension']; ?> m<sup>2</sup></span>
+                                            </li>
+                                            <li>
+                                                <h4 class="card-info-title">Block</h4>
+                                                <span><?php echo $row['block_number']; ?></span>
+                                            </li>
+                                            <li>
+                                                <h4 class="card-info-title">Lot</h4>
+                                                <span><?php echo $row['lot_number']; ?></span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                <a href="property-single.php?lot_Id=<?php echo $row['lot_Id']; ?>" class="link-a">Click here to view
-                                    <span class="ion-ios-arrow-forward"></span>
-                                </a>
-                            </div>
-                            <div class="card-footer-a">
-                                <ul class="card-info d-flex justify-content-around">
-                                    <li>
-                                        <h4 class="card-info-title">Dimension</h4>
-                                        <span><?php echo $row['dimension']; ?> m<sup>2</sup></span>
-                                    </li>
-                                    <li>
-                                        <h4 class="card-info-title">Block</h4>
-                                        <span><?php echo $row['block_number']; ?></span>
-                                    </li>
-                                    <li>
-                                        <h4 class="card-info-title">Lot</h4>
-                                        <span><?php echo $row['lot_number']; ?></span>
-                                    </li>
-                                  <!--   <li>
-                                        <h4 class="card-info-title">Downpayment</h4>
-                                        <span>&#8369; <?php echo $row['downpayment']; ?></span>
-                                    </li> -->
-                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <?php
+                <?php
             }
         } else {
             echo "0 results";
         }
+
+        // Close the database connection
+        $conn->close();
         ?>
       </div>
-      <div class="row">
         <div class="col-sm-12">
-          <nav class="pagination-a">
-            <ul class="pagination justify-content-end">
-              <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1">
-                  <span class="ion-ios-arrow-back"></span>
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <li class="page-item active">
-                <a class="page-link" href="#">2</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#">3</a>
-              </li>
-              <li class="page-item next">
-                <a class="page-link" href="#">
-                  <span class="ion-ios-arrow-forward"></span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+            <nav class="pagination-a">
+                <ul class="pagination justify-content-end">
+                    <!-- Previous Page Link -->
+                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>" tabindex="-1">
+                            <span class="ion-ios-arrow-back"></span>
+                        </a>
+                    </li>
+                    <?php
+                    // Pagination links
+                    for ($i = 1; $i <= ceil($totalPages); $i++) {
+                        ?>
+                        <li class="page-item <?php echo $page == $i ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                        <?php
+                    }
+                    ?>
+                    <!-- Next Page Link -->
+                    <li class="page-item <?php echo $page >= ceil($totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>">
+                            <span class="ion-ios-arrow-forward"></span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
-      </div>
     </div>
   </section>
   <!--/ Property Grid End /-->

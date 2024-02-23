@@ -107,8 +107,8 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
     <div class="row">
       <div class="col-sm-12">
         <div id="property-single-carousel" class="owl-carousel owl-arrow gallery-property">
-          <div class="card border-0">
-            <img class="card-img-top" src="<?php echo $row['image']; ?>" alt="Lot Image">
+          <div class="card border-0"style="display: flex; justify-content: center; align-items: center;">
+            <img class="card-img-top" src="<?php echo $row['image']; ?>" alt="Lot Image" style="max-width: 90%; height: 100%;">
           </div>
         </div>
         <div class="row">
@@ -126,7 +126,7 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
               </div>
               <div class="row">
                 <div class="col-md-12">
-                  <button type="submit" class="btn btn-b">Submit</button>
+                  <button type="submit" class="btn btn-b">Submit Request</button>
                 </div>
               </div>
             </form>

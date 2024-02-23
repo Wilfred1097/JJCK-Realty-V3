@@ -37,15 +37,30 @@ if(isset($_POST['submit'])) {
                 } else {
                     $stmt_update_otp_status->bind_param("s", $email);
                     $stmt_update_otp_status->execute();
-                    echo "<script>alert('OTP verified');</script>";
+                    $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    OTP Verified.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>';
                     $stmt_update_otp_status->close();
                     header("Location: index.php");
                 }
             } else {
-                echo "<script>alert('Invalid OTP');</script>";
+                $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Invalid OTP.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>';
             }
         } else {
-            echo "<script>alert('Email not found');</script>";
+            $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Email did not exist.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>';
         }
 
         // Close statement and connection
@@ -107,6 +122,7 @@ if(isset($_POST['submit'])) {
     <div class="container justify-content-center">
         <div class="login-container" style="margin-top: 170px;">
             <h2 class="text-center">Enter OTP</h2>
+            <?php echo $alert_message; ?>
             <form action="" method="POST">
                 <div class="form-group">
                     <input type="number" class="form-control" name="otp" placeholder="Enter OTP" required>

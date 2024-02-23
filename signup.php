@@ -22,7 +22,12 @@ if(isset($_POST['submit'])) {
     // If email already exists, return an error
     if ($result_check_email->num_rows > 0) {
         // Email already registered, display alert
-        echo "<script>alert('Email already registered');</script>";
+        $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    Email already taken.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>';
     } else {
         // Generating random OTP
         $random_otp = sprintf('%06d', mt_rand(0, 999999));
@@ -102,6 +107,7 @@ if(isset($_POST['submit'])) {
     <div class="container justify-content-center">
         <div class="login-container">
             <h2 class="text-center" style="margin-bottom: 30px;">Customer Signup</h2>
+            <?php echo $alert_message; ?>
             <form action="" method="post"  onsubmit="return validatePassword();">
                 <div class="form-group">
                     <label for="name">Complete Name</label>

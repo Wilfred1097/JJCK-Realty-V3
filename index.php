@@ -180,7 +180,7 @@ require './conn/db.php';
       <?php
       // SQL query to select all data from lot_table and limit to 4 rows, ordering by lot_Id in descending order
       // $sql = "SELECT * FROM lot_table ORDER by `lot_Id` DESC LIMIT 6";
-      $sql = "SELECT * FROM lot_table";
+      $sql = "SELECT * FROM lot_table ORDER BY lot_Id LIMIT 9";
 
       // Execute query
       $result = $conn->query($sql);

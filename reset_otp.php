@@ -2,6 +2,15 @@
 session_start();
 require './conn/db.php'; // Include your database connection file
 
+// Function to generate and send OTP
+function sendOTP($email, $otp) {
+    // Here, you would implement your code to send the OTP via email
+    // For demonstration purposes, let's assume the OTP is sent successfully
+    return true;
+}
+
+$alert_message = ""; // Initialize alert message
+
 if(isset($_POST['submit'])) {
     // Get entered OTP from the form
     $entered_otp = isset($_POST['otp']) ? $_POST['otp'] : '';
@@ -9,16 +18,18 @@ if(isset($_POST['submit'])) {
     // Get email from the session
     $email = isset($_SESSION['email']) ? $_SESSION['email'] : '';
 
-    // Store email in the session
-    $_SESSION['email'] = $email;
-
     // Query to fetch OTP from the database for the corresponding email
     $query_fetch_otp = "SELECT OTP FROM users_tb WHERE email = ?";
     $stmt_fetch_otp = $conn->prepare($query_fetch_otp);
 
     if (!$stmt_fetch_otp) {
         // Handle preparation error
-        echo "<script>alert('Preparation error: " . $conn->error . "');</script>";
+        $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Preparation error: ' . $conn->error . '
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>';
     } else {
         $stmt_fetch_otp->bind_param("s", $email);
         $stmt_fetch_otp->execute();
@@ -37,20 +48,20 @@ if(isset($_POST['submit'])) {
             } else {
                 // Display error message if OTPs do not match
                 $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            Invalid OTP
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>';
+                                    Invalid OTP
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>';
             }
         } else {
             // Display error message if email not found
             $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            Email does not exist.
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>';
+                                Email does not exist.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>';
         }
 
         // Close statement and connection
@@ -109,12 +120,12 @@ if(isset($_POST['submit'])) {
         <div class="login-container"  style="margin-top: 170px;">
             <h2 class="text-center">Reset Password</h2>
             <form method="POST">
-                <?php if(isset($alert_message)) echo $alert_message; ?>
+                <?php echo $alert_message; ?>
                 <div class="form-group">
                     <label for="otp" style="font-size: 14px;">OTP</label>
                     <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
                 </div>
-                <button type="submit" class="btn btn-success btn-block" name="submit">RESET</button>
+                <button type="submit" class="btn btn-success btn-block" name="submit">CONFIRM OTP</button>
             </form>
         </div>
     </div>
@@ -125,6 +136,7 @@ if(isset($_POST['submit'])) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function(){
+            // Send OTP asynchronously when the document is ready
             $.ajax({
                 type: "GET",
                 url: "send_email.php", // Path to the send_email.php script
@@ -137,4 +149,3 @@ if(isset($_POST['submit'])) {
 </body>
 
 </html>
-
