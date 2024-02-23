@@ -22,7 +22,12 @@ if(isset($_POST['submit'])) {
 
         if ($stmt_update_password->execute()) {
             // Password updated successfully
-            echo "<script>alert('Password updated successfully');</script>";
+            $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Password Change Successfully
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>';
             header("Location: login.php");
         } else {
             // Handle execution error
@@ -93,6 +98,24 @@ if(isset($_POST['submit'])) {
                     <label for="confirmnewpassword" style="font-size: 14px;">Confirm New Password</label>
                     <input type="password" class="form-control" id="confirmnewpassword" name="confirmnewpassword" placeholder="Confirm new password" required>
                 </div>
+                <div id="passwordMismatchAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    Passwords do not match.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="passwordCriteriaAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    Password must contain at least one uppercase letter and one special character.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="passwordCLengthAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+                    Password must be at least 8 character
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <button type="submit" class="btn btn-success btn-block" name="submit">Submit</button>
             </form>
         </div>
@@ -108,13 +131,35 @@ if(isset($_POST['submit'])) {
             var newPassword = document.getElementById("newpassword").value;
             var confirmPassword = document.getElementById("confirmnewpassword").value;
 
-            if (newPassword != confirmPassword) {
-                alert("Passwords do not match");
+            // Check if passwords match
+            if (newPassword !== confirmPassword) {
+                document.getElementById("passwordMismatchAlert").style.display = "block";
+                document.getElementById("passwordCriteriaAlert").style.display = "none";
                 return false;
             }
+
+            // Check if password meets criteria (at least one uppercase letter and one special character)
+            var uppercaseRegex = /[A-Z]/;
+            var specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+            if (!uppercaseRegex.test(newPassword) || !specialCharRegex.test(newPassword)) {
+                document.getElementById("passwordCriteriaAlert").style.display = "block";
+                document.getElementById("passwordMismatchAlert").style.display = "none";
+                return false;
+            }
+
+            if (!uppercaseRegex.test(newPassword) || !specialCharRegex.test(newPassword) || newPassword.length < 8) {
+                document.getElementById("passwordCLengthAlert").style.display = "block";
+                return false;
+            }
+
+            // Reset the alerts if the password meets all criteria
+            document.getElementById("passwordMismatchAlert").style.display = "none";
+            document.getElementById("passwordCriteriaAlert").style.display = "none";
             return true;
         }
     </script>
+
 </body>
 
 </html>

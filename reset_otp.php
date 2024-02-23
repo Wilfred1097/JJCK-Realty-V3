@@ -36,11 +36,21 @@ if(isset($_POST['submit'])) {
                 exit();
             } else {
                 // Display error message if OTPs do not match
-                echo "<script>alert('Invalid OTP');</script>";
+                $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Invalid OTP
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>';
             }
         } else {
             // Display error message if email not found
-            echo "<script>alert('Email not found');</script>";
+            $alert_message = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Email does not exist.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>';
         }
 
         // Close statement and connection
@@ -99,6 +109,7 @@ if(isset($_POST['submit'])) {
         <div class="login-container"  style="margin-top: 170px;">
             <h2 class="text-center">Reset Password</h2>
             <form method="POST">
+                <?php if(isset($alert_message)) echo $alert_message; ?>
                 <div class="form-group">
                     <label for="otp" style="font-size: 14px;">OTP</label>
                     <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter OTP" required>
