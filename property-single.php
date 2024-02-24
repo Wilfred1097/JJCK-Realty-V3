@@ -4,7 +4,7 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
     // Retrieve the lot_Id from the URL parameter
   $lot_Id = $_GET['lot_Id'];
   
-    // Include the database connection file
+  // Include the database connection file
   require_once './conn/db.php';
 
     // Prepare and execute the SQL query to select data from lot_table based on lot_Id
@@ -47,12 +47,6 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
       <!-- Main Stylesheet File -->
       <link href="css/style.css" rel="stylesheet">
 
-  <!-- =======================================================
-    Theme Name: EstateAgency
-    Theme URL: https://bootstrapmade.com/real-estate-agency-bootstrap-template/
-    Author: BootstrapMade.com
-    License: https://bootstrapmade.com/license/
-    ======================================================= -->
   </head>
 
   <body>
@@ -108,19 +102,19 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
       <div class="col-sm-12">
         <div id="property-single-carousel" class="owl-carousel owl-arrow gallery-property">
           <div class="card border-0"style="display: flex; justify-content: center; align-items: center;">
-            <img class="card-img-top" src="<?php echo $row['image']; ?>" alt="Lot Image" style="max-width: 90%; height: 100%;">
+            <img class="card-img-top" src="<?php echo $row['image']; ?>" alt="Lot Image" style="max-width: 100%; height: 100%;">
           </div>
         </div>
         <div class="row">
           <div class="col mt-4">
-            <form class="form-a contactForm">
+            <form class="form-a contactForm" id="tourRequestForm">
               <div class="row">
-                <h3 class="title-d">Request a Tour</h3>
+                <h3 class="title-d ml-3">Request a Tour</h3>
               </div>
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="tourDate" class="mt-4"><strong>Tour Date</strong></label>
-                  <input type="date" id="tourDate" name="tourDate" class="form-control" min="<?php echo date('Y-m-d', strtotime('+3 days')); ?>" required>
+                  <input type="date" id="tourDate" name="tourDate" class="form-control" min="<?php echo date('Y-m-d', strtotime('+1 days')); ?>" >
                   <!-- This sets the minimum date to three days after the current date -->
                 </div>
               </div>
@@ -258,11 +252,90 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
 <script src="lib/easing/easing.min.js"></script>
 <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="lib/scrollreveal/scrollreveal.min.js"></script>
-<!-- Contact Form JavaScript File -->
-<script src="contactform/contactform.js"></script>
 
 <!-- Template Main Javascript File -->
 <script src="js/main.js"></script>
+
+<!-- JavaScript for SweetAlert -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    // Function to handle form submission
+document.getElementById("tourRequestForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Check if user_token cookie exists
+    if (!getCookie('user_token')) {
+        // Display SweetAlert error message
+        swal("Oops!", "You need to be logged in to submit a tour request.", "error");
+    } else {
+        // Check if a date is selected
+        var tourDate = document.getElementById("tourDate").value;
+        if (!tourDate) {
+            // Display SweetAlert error message
+            swal("Oops!", "Please select a date.", "error");
+        } else {
+            // Extract user_id and lot_Id from the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var lot_Id = urlParams.get('lot_Id');
+            var user_token = getCookie('user_token');
+            var tourDate = document.getElementById("tourDate").value; // Get the tour date from the form input
+
+            // Decode user_token from base64
+            var decodedToken = atob(user_token);
+
+            // Parse decoded token as JSON to extract user_id
+            var tokenPayload = JSON.parse(decodedToken);
+            var user_id = tokenPayload.user_id;
+
+            //default value for status
+            var status = "Pending";
+
+            // Log user_id, lot_Id, and tourDate to the console
+            // console.log("User ID: " + user_id);
+            // console.log("Lot ID: " + lot_Id);
+            // console.log("Tour Date: " + tourDate);
+            // console.log("Status: " + status);
+
+            // Send data to PHP script using AJAX
+            $.ajax({
+              type: "POST",
+              url: "submit_tour_request.php", // Specify the PHP script file where you handle the database insertion
+              data: {
+                  user_id: user_id,
+                  lot_Id: lot_Id,
+                  tour_date: tourDate,
+                  status: status
+              },
+              success: function(response) {
+                  // Check if the response is "Tour request submitted successfully"
+                  if (response.trim() === "Tour request submitted successfully.") {
+                      // Display success message
+                      swal("Good job!", response, "success");
+                  } if (response.trim() === "Tour request already exists for this user, lot, and date.") {
+                      // Display success message
+                      swal("Oops!", "Request already submitted, just wait for approval", "error");
+                  }
+                   else {
+                      // Display error message or handle accordingly
+                      console.error("Error occurred while saving data: " + response);
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error("Error occurred while saving data: " + error);
+              }
+          });
+
+        }
+    }
+});
+    // Function to get cookie value by name
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+</script>
+
 
 </body>
 </html>
