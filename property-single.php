@@ -136,6 +136,10 @@ if(isset($_GET['lot_Id']) && !empty($_GET['lot_Id'])) {
               </div>
               <div class="summary-list">
                   <ul class="list">
+<!--                     <li class="d-flex justify-content-between">
+                      <strong>Block:</strong>
+                      <span><?php echo $row['lot_Id']; ?></span>
+                    </li> -->
                     <li class="d-flex justify-content-between">
                       <strong>Block:</strong>
                       <span><?php echo $row['block_number']; ?></span>
@@ -313,7 +317,7 @@ document.getElementById("tourRequestForm").addEventListener("submit", function(e
                       swal("Good job!", response, "success");
                   } if (response.trim() === "Tour request already exists for this user, lot, and date.") {
                       // Display success message
-                      swal("Oops!", "Request already submitted, just wait for approval", "error");
+                      swal("Oops!", "Request already submitted, just wait for approval", "info");
                   }
                    else {
                       // Display error message or handle accordingly

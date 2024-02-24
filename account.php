@@ -85,11 +85,15 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="background-color: #2FCC6D; color: white;">
                         Information
                     </div>
                     <div class="card-body">
-                        <?php
+                    <?php
+                    // Initialize variables
+                    $currentIndex = 0;
+                    $totalRequests = 0;
+
                     // Database connection
                     require './conn/db.php';
 
@@ -115,9 +119,10 @@
                             if ($result->num_rows > 0) {
                                 $user = $result->fetch_assoc();
                                 echo "<div class='user-info'>";
-                                echo "<p>Complete Name: " . $user['complete_name'] . "</p>";
+                                echo "<p>Name: " . $user['complete_name'] . "</p>";
                                 echo "<p>Address: " . $user['address'] . "</p>";
                                 echo "<p>Birthdate: " . $user['birthdate'] . "</p>";
+                                echo "<p>Phone #: " . $user['phone_number'] . "</p>";
                                 echo "<p>Email: " . $user['email'] . "</p>";
                                 echo "<p>Date Registered: " . $user['date_registered'] . "</p>";
                                 echo "</div>";
@@ -142,17 +147,100 @@
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="background-color: #2FCC6D; color: white;">
                         Tour Request
                     </div>
                     <div class="card-body">
-                        <!-- Content for Tour Request -->
+                        <?php
+                        // Database connection
+                        require './conn/db.php';
+
+                        // Check if user_token cookie exists
+                        if (isset($_COOKIE['user_token'])) {
+                            $user_token = $_COOKIE['user_token'];
+
+                            // Decode the token to extract user ID
+                            $payload_json = base64_decode($user_token);
+                            $payload = json_decode($payload_json, true);
+
+                            if (isset($payload['user_id'])) {
+                                $user_id = $payload['user_id'];
+
+                                // Query to fetch user tour request data using user ID
+                                $query = "SELECT * FROM user_tour_request_view WHERE id = ?";
+                                $stmt = $conn->prepare($query);
+                                $stmt->bind_param("i", $user_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+
+                                // Check if user tour request data exists
+                                if ($result->num_rows > 0) {
+                                    // Fetch all rows into an array
+                                    $tourRequests = $result->fetch_all(MYSQLI_ASSOC);
+
+                                    // Get the total number of tour requests
+                                    $totalRequests = count($tourRequests);
+
+                                    // Check if there are any tour requests
+                                    if ($totalRequests > 0) {
+                                        // Determine the current index to display
+                                        $currentIndex = isset($_GET['index']) ? $_GET['index'] : 0;
+
+                                        // Display the tour request at the current index
+                                        $currentRequest = $tourRequests[$currentIndex];
+
+                                        echo "<div class='user-tour-request-info'>";
+                                        echo "<div class='user-info'>";
+                                        echo "<p>Block #: " . $currentRequest['block_number'] . "&emsp;&emsp;&emsp;Lot #:" . $currentRequest['lot_number'] . "</p>";
+                                        echo "<p>Request Date: " . $currentRequest['request_date'] . "</p>";
+                                        echo "<p>Date Requested: " . $currentRequest['date_requested'] . "</p>";
+                                        echo "<p>Status: " . $currentRequest['status'] . "</p>";
+                                        echo "</div>";
+                                        echo "</div>";
+
+                                    } else {
+                                        echo "You have no tour request.";
+                                    }
+                                } else {
+                                    echo "You have no tour request.";
+                                }
+
+                                // Close statement and connection
+                                $stmt->close();
+                            } else {
+                                echo "User ID not found in token payload.";
+                            }
+                        } else {
+                            echo "User token not found.";
+                        }
+
+                        // Close database connection
+                        $conn->close();
+                        ?>
                     </div>
+                    <div class="card-footer" style="overflow: hidden; background-color: white;">
+                    <div class="float-left">
+                        <?php
+                        // Display Previous button on the lower left
+                        if ($currentIndex > 0) {
+                            echo "<a href='account.php?index=" . ($currentIndex - 1) . "' class='btn btn-success mr-2'><</a>";
+                        }
+                        ?>
+                    </div>
+                    <div class="float-right">
+                        <?php
+                        // Display Next button on the lower right
+                        if ($currentIndex < $totalRequests - 1) {
+                            echo "<a href='account.php?index=" . ($currentIndex + 1) . "' class='btn btn-success'>></a>";
+                        }
+                        ?>
+                    </div>
+                </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" style="background-color: #2FCC6D; color: white;">
                         Billing
                     </div>
                     <div class="card-body">

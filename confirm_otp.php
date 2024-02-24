@@ -2,6 +2,8 @@
 require './conn/db.php';
 session_start();
 
+$alert_message = '';
+
 if(isset($_POST['submit'])) {
     // Get OTP from the form
     $entered_otp = isset($_POST['otp']) ? $_POST['otp'] : '';

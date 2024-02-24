@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$alert_message = '';
+
 if(isset($_POST['submit'])) {
     // Get new password from the form
     $newPassword = isset($_POST['newpassword']) ? $_POST['newpassword'] : '';

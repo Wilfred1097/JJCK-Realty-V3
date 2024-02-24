@@ -2,6 +2,8 @@
 session_start();
 require './conn/db.php';
 
+$alert_message = '';
+
 if(isset($_POST['submit'])) {
     $email = $_POST['email'];
 

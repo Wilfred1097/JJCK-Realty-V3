@@ -2,11 +2,14 @@
 require './conn/db.php';
 session_start();
 
+$alert_message = '';
+
 if(isset($_POST['submit'])) {
     // Storing form data in variables
     $name = isset($_POST['name']) ? $_POST['name'] : '';
     $address = isset($_POST['address']) ? $_POST['address'] : '';
     $birthdate = isset($_POST['birthdate']) ? $_POST['birthdate'] : '';
+    $phone = isset($_POST['phone']) ? $_POST['phone'] : '';
     $email = isset($_POST['email']) ? $_POST['email'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
@@ -33,9 +36,9 @@ if(isset($_POST['submit'])) {
         $random_otp = sprintf('%06d', mt_rand(0, 999999));
 
         // Inserting data into the database
-        $query = "INSERT INTO users_tb (complete_name, address, birthdate, email, OTP, password, otp_status) VALUES (?, ?, ?, ?, ?, ?, 'not verified')";
+        $query = "INSERT INTO users_tb (complete_name, address, birthdate, phone_number, email, OTP, password, otp_status) VALUES (?, ?, ?, ?, ?, ?, ?, 'not verified')";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssssss", $name, $address, $birthdate, $email, $random_otp, $hashed_password);
+        $stmt->bind_param("sssssss", $name, $address, $birthdate, $phone, $email, $random_otp, $hashed_password);
 
         // Executing the query
         if ($stmt->execute()) {
@@ -120,6 +123,10 @@ if(isset($_POST['submit'])) {
                 <div class="form-group">
                     <label for="birthdate">Birthdate</label>
                     <input type="date" class="form-control" id="birthdate" name="birthdate" >
+                </div>
+                 <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="number" class="form-control" id="phone" name="phone" min="11" max="999999999999999" placeholder="Enter phone number" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
