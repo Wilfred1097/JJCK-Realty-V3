@@ -11,7 +11,7 @@ if(isset($_POST['submit'])) {
         $password = $_POST['password'];
 
         // Query to fetch the hashed password from the database
-        $query = "SELECT id, password FROM users_tb WHERE email = ? AND otp_status = ?";
+        $query = "SELECT id, complete_name, password FROM users_tb WHERE email = ? AND otp_status = ?";
         $stmt = $conn->prepare($query);
         $otp_status = "verified"; // Dynamically set the value of otp_status
         $stmt->bind_param("ss", $email, $otp_status);
@@ -24,12 +24,14 @@ if(isset($_POST['submit'])) {
             $row = $result->fetch_assoc();
             $hashed_password = $row['password'];
             $user_id = $row['id'];
+            $name = $row['complete_name'];
 
             // Verify the entered password against the hashed password
             if (password_verify($password, $hashed_password)) {
                 // Password is correct, set session variables if needed
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $user_id;
+                $_SESSION['complete_name'] = $name;
 
                 // Check if the token cookie already exists
                 if (!isset($_COOKIE['user_token'])) {

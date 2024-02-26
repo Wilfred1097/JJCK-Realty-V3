@@ -1,5 +1,11 @@
 {
+    "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/xendit/xendit-php.git"
+    }
+  ],
     "require": {
-        "phpmailer/phpmailer": "^6.8"
+        "phpmailer/phpmailer": "^6.8",
     }
 }

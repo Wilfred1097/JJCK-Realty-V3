@@ -143,7 +143,7 @@ require './conn/db.php';
         $offset = ($page - 1) * $limit;
 
         // SQL query to count total number of rows
-        $countQuery = "SELECT COUNT(*) as total FROM lot_table";
+        $countQuery = "SELECT COUNT(*) as total FROM lot_tb WHERE status = 'Available'";
         $countResult = $conn->query($countQuery);
         $countRow = $countResult->fetch_assoc();
         $totalRows = $countRow['total'];
@@ -174,7 +174,7 @@ require './conn/db.php';
         }
 
         // SQL query to select limited data from users table based on pagination and sorting
-        $sql = "SELECT * FROM lot_table ORDER BY $sort_column $sort_order LIMIT $limit OFFSET $offset";
+        $sql = "SELECT * FROM lot_tb WHERE status = 'Available' ORDER BY $sort_column $sort_order LIMIT $limit OFFSET $offset";
 
 
         // // SQL query to select limited data from users table based on pagination
@@ -194,9 +194,9 @@ require './conn/db.php';
                         <div class="card-box-a card-shadow">
                             <div class="img-box-a">
                                 <?php
-                                // Directly use the data URI stored in the database
+                                // Directly use the base64 encoded image stored in the database
                                 ?>
-                                <img src="<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
+                                <img src="data:image/jpeg;base64,<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
                             </div>
                             <div class="card-overlay">
                                 <div class="card-overlay-a-content">
@@ -204,7 +204,7 @@ require './conn/db.php';
                                     </div>
                                     <div class="card-body-a">
                                         <div class="price-box d-flex">
-                                            <span class="price-a">BUY | &#8369; <?php echo $row['price']; ?></span>
+                                            <span class="price-a">BUY | &#8369; <?php echo number_format($row['price']); ?></span>
                                         </div>
                                         <a href="property-single.php?lot_Id=<?php echo $row['lot_Id']; ?>" class="link-a">Click here to view
                                             <span class="ion-ios-arrow-forward"></span>

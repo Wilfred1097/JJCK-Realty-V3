@@ -180,7 +180,7 @@ require './conn/db.php';
       <?php
       // SQL query to select all data from lot_table and limit to 4 rows, ordering by lot_Id in descending order
       // $sql = "SELECT * FROM lot_table ORDER by `lot_Id` DESC LIMIT 6";
-      $sql = "SELECT * FROM lot_table ORDER BY lot_Id LIMIT 9";
+      $sql = "SELECT * FROM lot_tb WHERE status = 'Available' ORDER BY lot_Id LIMIT 6";
 
       // Execute query
       $result = $conn->query($sql);
@@ -193,19 +193,19 @@ require './conn/db.php';
           <div class="col-md-4 mt-4">
               <div class="carousel-item-b">
                   <div class="card-box-a card-shadow">
-                      <div class="img-box-a">
-                          <?php
-                          // Directly use the data URI stored in the database
-                          ?>
-                          <img src="<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
-                      </div>
+                    <div class="img-box-a">
+                        <?php
+                        // Directly use the base64 encoded image stored in the database
+                        ?>
+                        <img src="data:image/jpeg;base64,<?php echo $row['image']; ?>" alt="" class="img-a img-fluid">
+                    </div>
                       <div class="card-overlay">
                           <div class="card-overlay-a-content">
                               <div class="card-header-a">
                               </div>
                               <div class="card-body-a">
                                   <div class="price-box d-flex">
-                                      <span class="price-a">BUY | &#8369; <?php echo $row['price']; ?></span>
+                                      <span class="price-a">BUY | &#8369; <?php echo number_format($row['price']); ?></span>
                                   </div>
                                   <a href="property-single.php?lot_Id=<?php echo $row['lot_Id']; ?>" class="link-a">Click here to view<span class="ion-ios-arrow-forward"></span></a>
                               </div>

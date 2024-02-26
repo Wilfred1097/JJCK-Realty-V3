@@ -90,6 +90,7 @@
                     </div>
                     <div class="card-body">
                     <?php
+                    session_start();
                     // Initialize variables
                     $currentIndex = 0;
                     $totalRequests = 0;
@@ -97,46 +98,36 @@
                     // Database connection
                     require './conn/db.php';
 
-                    // Check if user_token cookie exists
-                    if (isset($_COOKIE['user_token'])) {
-                        $user_token = $_COOKIE['user_token'];
+                    // Check if user_id is set in the session
+                    if (isset($_SESSION['user_id'])) {
+                        $user_id = $_SESSION['user_id'];
 
-                        // Decode the token to extract user ID
-                        $payload_json = base64_decode($user_token);
-                        $payload = json_decode($payload_json, true);
+                        // Query to fetch user data using user ID
+                        $query = "SELECT * FROM users_tb WHERE id = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $user_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                        if(isset($payload['user_id'])){
-                            $user_id = $payload['user_id'];
-
-                            // Query to fetch user data using user ID
-                            $query = "SELECT * FROM users_tb WHERE id = ?";
-                            $stmt = $conn->prepare($query);
-                            $stmt->bind_param("i", $user_id);
-                            $stmt->execute();
-                            $result = $stmt->get_result();
-
-                            // Check if user data exists
-                            if ($result->num_rows > 0) {
-                                $user = $result->fetch_assoc();
-                                echo "<div class='user-info'>";
-                                echo "<p>Name: " . $user['complete_name'] . "</p>";
-                                echo "<p>Address: " . $user['address'] . "</p>";
-                                echo "<p>Birthdate: " . $user['birthdate'] . "</p>";
-                                echo "<p>Phone #: " . $user['phone_number'] . "</p>";
-                                echo "<p>Email: " . $user['email'] . "</p>";
-                                echo "<p>Date Registered: " . $user['date_registered'] . "</p>";
-                                echo "</div>";
-                            } else {
-                                echo "User data not found.";
-                            }
-
-                            // Close statement and connection
-                            $stmt->close();
+                        // Check if user data exists
+                        if ($result->num_rows > 0) {
+                            $user = $result->fetch_assoc();
+                            echo "<div class='user-info'>";
+                            echo "<p>Name: " . $user['complete_name'] . "</p>";
+                            echo "<p>Address: " . $user['address'] . "</p>";
+                            echo "<p>Birthdate: " . $user['birthdate'] . "</p>";
+                            echo "<p>Phone #: " . $user['phone_number'] . "</p>";
+                            echo "<p>Email: " . $user['email'] . "</p>";
+                            echo "<p>Date Registered: " . $user['date_registered'] . "</p>";
+                            echo "</div>";
                         } else {
-                            echo "User ID not found in token payload.";
+                            echo "User data not found.";
                         }
+
+                        // Close statement and connection
+                        $stmt->close();
                     } else {
-                        echo "User token not found.";
+                        echo "User ID not found in session.";
                     }
 
                     // Close database connection
@@ -152,19 +143,12 @@
                     </div>
                     <div class="card-body">
                         <?php
-                        // Database connection
-                        require './conn/db.php';
+                            // Database connection
+                            require './conn/db.php';
 
-                        // Check if user_token cookie exists
-                        if (isset($_COOKIE['user_token'])) {
-                            $user_token = $_COOKIE['user_token'];
-
-                            // Decode the token to extract user ID
-                            $payload_json = base64_decode($user_token);
-                            $payload = json_decode($payload_json, true);
-
-                            if (isset($payload['user_id'])) {
-                                $user_id = $payload['user_id'];
+                            // Check if user_id is set in the session
+                            if (isset($_SESSION['user_id'])) {
+                                $user_id = $_SESSION['user_id'];
 
                                 // Query to fetch user tour request data using user ID
                                 $query = "SELECT * FROM user_tour_request_view WHERE id = ?";
@@ -183,22 +167,23 @@
 
                                     // Check if there are any tour requests
                                     if ($totalRequests > 0) {
-                                        // Determine the current index to display
-                                        $currentIndex = isset($_GET['index']) ? $_GET['index'] : 0;
+                                    // Determine the current index to display
+                                    $currentIndex = isset($_GET['index']) ? $_GET['index'] : 0;
 
-                                        // Display the tour request at the current index
-                                        $currentRequest = $tourRequests[$currentIndex];
+                                    // Display the tour request at the current index
+                                    $currentRequest = $tourRequests[$currentIndex];
 
-                                        echo "<div class='user-tour-request-info'>";
-                                        echo "<div class='user-info'>";
-                                        echo "<p>Block #: " . $currentRequest['block_number'] . "&emsp;&emsp;&emsp;Lot #:" . $currentRequest['lot_number'] . "</p>";
-                                        echo "<p>Request Date: " . $currentRequest['request_date'] . "</p>";
-                                        echo "<p>Date Requested: " . $currentRequest['date_requested'] . "</p>";
-                                        echo "<p>Status: " . $currentRequest['status'] . "</p>";
-                                        echo "</div>";
-                                        echo "</div>";
-
-                                    } else {
+                                    echo "<div class='user-tour-request-info'>";
+                                    echo "<div class='user-info'>";
+                                    echo "<p>Block #: " . $currentRequest['block_number'] . "&emsp;&emsp;&emsp;Lot #:" . $currentRequest['lot_number'] . "</p>";
+                                    echo "<p>Request Date: " . $currentRequest['request_date'] . "</p>";
+                                    // Displaying only the date part from 'date_requested'
+                                    $dateRequested = date('Y-m-d', strtotime($currentRequest['date_requested']));
+                                    echo "<p>Date Requested: " . $dateRequested . "</p>";
+                                    echo "<p>Status: " . $currentRequest['status'] . "</p>";
+                                    echo "</div>";
+                                    echo "</div>";
+                                } else {
                                         echo "You have no tour request.";
                                     }
                                 } else {
@@ -208,15 +193,12 @@
                                 // Close statement and connection
                                 $stmt->close();
                             } else {
-                                echo "User ID not found in token payload.";
+                                echo "User ID not found in session.";
                             }
-                        } else {
-                            echo "User token not found.";
-                        }
 
-                        // Close database connection
-                        $conn->close();
-                        ?>
+                            // Close database connection
+                            $conn->close();
+                            ?>
                     </div>
                     <div class="card-footer" style="overflow: hidden; background-color: white;">
                     <div class="float-left">

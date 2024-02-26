@@ -1,8 +1,13 @@
 <?php
-$servername = "localhost"; // Replace 'localhost' with your database host if necessary
-$username = "root"; // Replace 'your_username' with your MySQL username
-$password = ""; // Replace 'your_password' with your MySQL password
-$database = "jjck"; // Replace 'your_database' with your MySQL database name
+// $servername = "localhost";
+// $username = "root"; 
+// $password = "";
+// $database = "jjck_realty_db";
+
+$servername = "b4svrhz1pxumygusk30q-mysql.services.clever-cloud.com";
+$username = "uvxa2eya4zuwpvll"; 
+$password = "Q2SvUshnXekmsts9M2as";
+$database = "b4svrhz1pxumygusk30q";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $database);
